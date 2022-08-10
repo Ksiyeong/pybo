@@ -1,0 +1,77 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'join.css' %}?after">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <title>시영스타그램_회원가입</title>
+</head>
+
+<script>
+    function join() {
+        let NOW_PASSWORD = $('#NOW_PASSWORD').val();
+        let NEW_PASSWORD = $('#NEW_PASSWORD').val();
+        let NEW2_PASSWORD = $('#NEW2_PASSWORD').val();
+
+        $.ajax({
+            url: "/user/change_account",
+            method: "POST",
+            data: {
+                NOW_PASSWORD: NOW_PASSWORD,
+                NEW_PASSWORD: NEW_PASSWORD,
+                NEW2_PASSWORD: NEW2_PASSWORD
+            },
+            success: function () {
+                alert('비밀번호 변경 성공! 다시 로그인 해주세요');
+                location.replace("/user/login");
+            },
+            error: function (data) {
+                $('.join_msg').text(data['responseJSON']);
+                $('.join_msg').css({
+                    color: 'red'
+                });
+            }
+        });
+    };
+
+</script>
+
+<body>
+    <div>
+        <div class="up_box">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREtyPmQD7DAeXeJYJpkcLkchzYMXKUPaiE0g&usqp=CAU"
+                alt="">
+            <div class="join_msg">비밀번호 변경</div>
+
+            <div class="form-floating">
+                <input type="password" class="form-control" id="NOW_PASSWORD" placeholder="현재비밀번호">
+                <label for="floatingPassword">현재 비밀번호</label>
+            </div>
+            <div class="form-floating" style="margin-top: 10px;">
+                <input type="password" class="form-control" id="NEW_PASSWORD" placeholder="비밀번호">
+                <label for="floatingPassword">새로운 비밀번호</label>
+            </div>
+            <div class="form-floating" style="margin-top: 10px;">
+                <input type="password" class="form-control" id="NEW2_PASSWORD" placeholder="비밀번호">
+                <label for="floatingPassword">비밀번호 확인</label>
+            </div>
+            <button class="join_btn" onclick="join()">가입</button>
+        </div>
+        <div class="down_box">
+            계정 삭제하기 &nbsp;<a class="change_btn" href="/user/delete_account">삭제하기</a>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

@@ -1,0 +1,569 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="top">
+    <div><img class="profile_img" src="{{ user.profile_image }}"></div>
+    <div class="profile_content">
+        <div class="profile_content_s1">{{ user.nickname }}
+            <button onclick="show_profile_modal()">프로필 편집</button>
+            <span onclick="show_UD_account()" class="material-icons-outlined">settings</span>
+        </div>
+        <div class="profile_content_s2">
+            <div>게시물&nbsp;<b>{{ feed_list_count }}</b></div>
+            <div>팔로워&nbsp;<b>82</b></div>
+            <div>팔로우&nbsp;<b>55</b></div>
+        </div>
+        <div class="profile_content_s3"><b>{{ user.name }}</b></div>
+        <div class="profile_content_s4">{{ user.profile_comment }}</div>
+    </div>
+    <div></div>
+</div>
+
+<div class="bottom">
+    <div style="display: flex;">
+        <button class="bottom_btn" id="bottom_btn_1" onclick="location.href='/user/profile'"><span
+                class="material-icons-outlined">grid_on</span>&nbsp;게시물</button>
+        <button class="bottom_btn" id="bottom_btn_2" onclick="location.href='?btn=like'"><span
+                class="material-icons-outlined">favorite_border</span>&nbsp;좋아요</button>
+        <button class="bottom_btn" id="bottom_btn_3" onclick="location.href='?btn=bookmark'"><span
+                class="material-icons-outlined">bookmark_border</span>&nbsp;저장됨</button>
+    </div>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for feed in feed_list %}
+        <div class="col">
+            <div>
+                {% if now_searchname == "" %}
+                <img onclick="show_UD_feed({{feed.id}}, '{{ feed.feed_img }}', '{{feed.feed_content}}')"
+                    src="{{ feed.feed_img }}">
+                {% elif now_searchname == "like" %}
+                <img onclick="show_UD_like({{feed.id}})" src="{{ feed.feed_img }}">
+                {% elif now_searchname == "bookmark" %}
+                <img onclick="show_UD_bookmark({{feed.id}})" src="{{ feed.feed_img }}">
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="profile_modal_base">
+    <div class="profile_modal_body">
+        <div class="profile_modal_body_nav">
+            <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+            <b>프로필 정보 수정하기</b>
+            <span class="material-icons-outlined" onclick="profile_close_modal()">close</span>
+        </div>
+        <div class="profile_modal_body_bottom">
+            <div class="profile_modal_body_bottom_left" style="background-image: url('{{user.profile_image}}');"><input
+                    id="input_profile_image" type="file" onchange="btn_profile_updateFiles(this)" accept="img/*"></div>
+            <div class="profile_modal_body_bottom_right">
+                <b>이름 : <input class="profile_update_area" id="user_name" value="{{ user.name }}" type="text"></b>
+                <b>닉네임 : <input class="profile_update_area" id="user_nickname" value="{{ user.nickname }}"
+                        type="text"></b>
+                <b>상태 메세지 : </b><textarea id="profile_comment_input_area"
+                    placeholder="문구 입력 ...">{{ user.profile_comment }}</textarea>
+                <div>
+                    <button onclick="default_profile_image()">기본 이미지</button>
+                    <button onclick="onClickUpload()">사진<br>선택하기</button>
+                    <button onclick="profile_update()">수정하기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="UD_modal_base">
+    <div class="UD_modal_body UD_feed">
+        <div class="UD_modal_body_nav">
+            <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+            <b>게시글 수정</b>
+            <span class="material-icons-outlined" onclick="close_UD_modal()">close</span>
+        </div>
+        <div class="UD_modal_body_bottom">
+            <div class="UD_modal_body_bottom_left" onclick="show_U_modal()">수정하기</div>
+            <div class="UD_modal_body_bottom_right" onclick="real_delete_feed()">삭제하기</div>
+        </div>
+    </div>
+
+    <div class="UD_modal_body real_delete">
+        <div class="UD_modal_body_nav">
+            <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+            <b>정말 삭제하시겠습니까?</b>
+            <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+        </div>
+        <div class="UD_modal_body_bottom">
+            <div class="UD_modal_body_bottom_left" onclick="delete_feed()">삭제하기</div>
+            <div class="UD_modal_body_bottom_right" onclick="delete_cancel()">취소하기</div>
+        </div>
+    </div>
+
+    <div class="U_modal_body">
+        <div class="U_modal_body_nav">
+            <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+            <b>게시글 수정하기</b>
+            <span class="material-icons-outlined" onclick="close_U_modal()">close</span>
+        </div>
+        <div class="U_modal_body_bottom">
+            <div class="U_modal_body_bottom_left"><input id="U_input_feed_image" type="file"
+                    onchange="btn_profile_feed_updateFiles(this)" accept="img/*"></div>
+            <div class="U_modal_body_bottom_right">
+                <div><img class="profile_img" src="{{ user.profile_image }}">&nbsp;&nbsp;<b>{{ user.nickname }}</b>
+                </div>
+                <textarea id="U_feed_input_area" placeholder="문구 입력 ..."></textarea>
+                <div class="U_modal_body_bottom_right_btn">
+                    <button onclick="U_onclick_feed_update()">사진<br>선택하기</button>
+                    <button onclick="U_feed_update()">수정하기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="UD_modal_body UD_like">
+        <div class="UD_modal_body_nav">
+            <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+            <b>좋아요 취소하기</b>
+            <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+        </div>
+        <div class="UD_modal_body_bottom">
+            <div class="UD_modal_body_bottom_left" onclick="delete_favorite()">네</div>
+            <div class="UD_modal_body_bottom_right" onclick="close_UD_modal()">아니요</div>
+        </div>
+    </div>
+    <div class="UD_modal_body UD_bookmark">
+        <div class="UD_modal_body_nav">
+            <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+            <b>북마크 취소하기</b>
+            <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+        </div>
+        <div class="UD_modal_body_bottom">
+            <div class="UD_modal_body_bottom_left" onclick="delete_bookmark()">네</div>
+            <div class="UD_modal_body_bottom_right" onclick="close_UD_modal()">아니요</div>
+        </div>
+    </div>
+
+    <div class="UD_modal_body UD_account">
+        <div class="UD_modal_body_nav">
+            <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+            <b>비밀번호를 입력하세요</b>
+            <span class="material-icons-outlined" onclick="close_UD_modal()">close</span>
+        </div>
+        <div class="UD_modal_body_bottom">
+            <input class="UD_account_password" type="password" placeholder="비밀번호">
+            <div class="UD_modal_body_bottom_left" onclick="UD_same_password()">입력</div>
+            <div></div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    let now_searchname = window.location.search
+    if (now_searchname == "") {
+        $('#bottom_btn_1').css({
+            "color": "black",
+            "border-top": "1px solid black"
+        });
+    }
+    else if (now_searchname == "?btn=like") {
+        $('#bottom_btn_2').css({
+            "color": "black",
+            "border-top": "1px solid black"
+        });
+    }
+    else if (now_searchname == "?btn=bookmark") {
+        $('#bottom_btn_3').css({
+            "color": "black",
+            "border-top": "1px solid black"
+        });
+    }
+
+
+    // 프로필 수정기능
+    let profile_files;
+    function show_profile_modal() {
+        $('.profile_modal_base').css({
+            display: 'flex',
+            top: window.pageYOffset + 'px'
+        });
+        $(document.body).css({
+            overflow: 'hidden'
+        });
+    };
+
+    function profile_close_modal() {
+        $('.profile_modal_base').css({
+            display: 'none'
+        });
+        $(document.body).css({
+            overflow: 'scroll'
+        });
+    }
+
+    $('.profile_modal_body_bottom_left')
+        .on("dragover", profile_dragOver)
+        .on("dragleave", profile_dragOver)
+        .on("drop", profile_updateFiles);
+
+
+
+    function profile_dragOver(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        if (e.type == "dragover") {
+            $(e.target).css({
+                'background-color': 'black',
+                'outline-offset': '-20px'
+            });
+        } else {
+            $(e.target).css({
+                "background-color": "white",
+                "outline-offset": "-10px"
+            });
+        }
+    }
+
+    function profile_updateFiles(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        profile_dragOver(e);
+
+        e.dataTransfer = e.originalEvent.dataTransfer;
+        profile_files = e.target.files || e.dataTransfer.files;
+        if (profile_files.length > 1) {
+            alert('하나만 올리세요.');
+            return;
+        }
+        if (profile_files[0].type.match(/image.*/)) {
+            $(e.target).css({
+                "background-image": "url(" + window.URL.createObjectURL(profile_files[0]) + ")",
+                "outline": "none",
+                "background-size": "100% auto"
+            });
+        } else {
+            alert('이미지가 아닙니다.');
+            return;
+        }
+    };
+    function onClickUpload() {
+        let myInput = document.getElementById("input_profile_image");
+        myInput.click();
+    };
+    function btn_profile_updateFiles(input) {
+        profile_files = input.files;
+        if (profile_files.length > 1) {
+            alert('하나만 올리세요.');
+            return;
+        }
+        if (profile_files[0].type.match(/image.*/)) {
+            $('.profile_modal_body_bottom_left').css({
+                "background-image": "url(" + window.URL.createObjectURL(profile_files[0]) + ")",
+                "outline": "none",
+                "background-size": "100% auto"
+            });
+        } else {
+            alert('이미지가 아닙니다.');
+            return;
+        }
+    };
+
+    let profile_image;
+    function profile_update() {
+        let fd = new FormData();
+
+        if (profile_files != undefined) {
+            let file = profile_files[0];
+            profile_image = file.name;
+
+            fd.append('file', file);
+            fd.append('profile_image', profile_image);
+        } else if (profile_image == "/media/profile_image/default_profile.jpeg") {
+            fd.append('profile_image', profile_image)
+        };
+
+        let name = $('#user_name').val();
+        let nickname = $('#user_nickname').val();
+        let profile_comment = $('#profile_comment_input_area').val();
+
+        fd.append('name', name);
+        fd.append('nickname', nickname);
+        fd.append('profile_comment', profile_comment);
+
+        $.ajax({
+            url: "/user/profile/",
+            method: "POST",
+            data: fd,
+            processData: false,
+            contentType: false,
+            success: function () {
+                alert('프로필 수정 성공!');
+                location.replace("")
+            },
+            error: function () {
+                alert('프로필 수정 실패!');
+            }
+        });
+    };
+
+    function default_profile_image() {
+        $('.profile_modal_body_bottom_left').css({
+            "background-image": "url(/media/profile_image/default_profile.jpeg)"
+        })
+        profile_image = "/media/profile_image/default_profile.jpeg"
+    };
+
+    // 피드이미지 수정과 삭제기능
+    let profile_feed_id;
+    let profile_feed_img;
+    let profile_feed_content;
+    function show_UD_feed(x, y, z) {
+        profile_feed_id = x;
+        profile_feed_img = y;
+        profile_feed_content = z;
+
+        $('.UD_modal_base').css({
+            display: 'flex',
+            top: window.pageYOffset + 'px'
+        });
+        $('.UD_feed').css({
+            display: 'block'
+        });
+        $(document.body).css({
+            overflow: 'hidden'
+        });
+    };
+
+    function close_UD_modal() {
+        $('.UD_modal_body').css({
+            display: 'none'
+        });
+        $('.UD_modal_base').css({
+            display: 'none'
+        });
+        $(document.body).css({
+            overflow: 'scroll'
+        });
+    }
+
+
+    function real_delete_feed() {
+        $('.real_delete').css({
+            "display": "block"
+        });
+    };
+
+    function delete_cancel() {
+        $('.real_delete').css({
+            "display": "none"
+        });
+    };
+
+    function delete_feed() {
+        $.ajax({
+            url: "/user/profile/delete_feed",
+            method: "POST",
+            data: { profile_feed_id: profile_feed_id },
+            success: function () {
+                alert('게시글 삭제 성공!');
+                location.replace("")
+            },
+            error: function () {
+                alert('게시글 삭제 실패!');
+            }
+        });
+    };
+
+    let feed_files;
+    function show_U_modal() {
+        $('.U_modal_body').css({
+            "display": "block"
+        });
+        $('.U_modal_body_bottom_left').css({
+            "background-image": "url(" + profile_feed_img + ")"
+        });
+        $('#U_feed_input_area').val(profile_feed_content);
+    };
+
+    function close_U_modal() {
+        $('.U_modal_body').css({
+            "display": "none"
+        })
+    };
+
+    $('.U_modal_body_bottom_left')
+        .on("dragover", U_feed_dragOver)
+        .on("dragleave", U_feed_dragOver)
+        .on("drop", U_feed_updateFiles);
+
+    function U_feed_dragOver(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        if (e.type == "dragover") {
+            $(e.target).css({
+                'background-color': 'black',
+                'outline-offset': '-20px'
+            });
+        } else {
+            $(e.target).css({
+                "background-color": "white",
+                "outline-offset": "-10px"
+            });
+        }
+    }
+
+    function U_feed_updateFiles(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        U_feed_dragOver(e);
+
+        e.dataTransfer = e.originalEvent.dataTransfer;
+        feed_files = e.target.files || e.dataTransfer.files;
+        if (feed_files.length > 1) {
+            alert('하나만 올리세요.');
+            return;
+        }
+        if (feed_files[0].type.match(/image.*/)) {
+            $(e.target).css({
+                "background-image": "url(" + window.URL.createObjectURL(feed_files[0]) + ")",
+                "outline": "none",
+                "background-size": "100% auto"
+            });
+        } else {
+            alert('이미지가 아닙니다.');
+            return;
+        }
+    };
+    function U_onclick_feed_update() {
+        let U_myInput = document.getElementById("U_input_feed_image");
+        U_myInput.click();
+    };
+    function btn_profile_feed_updateFiles(input) {
+        feed_files = input.files;
+        if (feed_files.length > 1) {
+            alert('하나만 올리세요.');
+            return;
+        }
+        if (feed_files[0].type.match(/image.*/)) {
+            $('.U_modal_body_bottom_left').css({
+                "background-image": "url(" + window.URL.createObjectURL(feed_files[0]) + ")",
+                "outline": "none",
+                "background-size": "100% auto"
+            });
+        } else {
+            alert('이미지가 아닙니다.');
+            return;
+        }
+    };
+
+    function U_feed_update() {
+        let fd = new FormData();
+        if (feed_files != undefined) {
+            fd.append('file', feed_files[0]);
+        };
+        fd.append('content_id', profile_feed_id);
+        fd.append('feed_content', $('#U_feed_input_area').val());
+        $.ajax({
+            url: "/user/profile/update_feed",
+            method: "POST",
+            data: fd,
+            processData: false,
+            contentType: false,
+            success: function () {
+                alert('게시글 수정 성공!');
+                location.replace("")
+            },
+            error: function () {
+                alert('게시글 수정 실패!');
+            }
+        });
+    };
+
+    //좋아요 취소기능
+    function show_UD_like(x) {
+        profile_feed_id = x;
+
+        $('.UD_modal_base').css({
+            display: 'flex',
+            top: window.pageYOffset + 'px'
+        });
+        $('.UD_like').css({
+            display: 'block'
+        });
+        $(document.body).css({
+            overflow: 'hidden'
+        });
+    };
+
+    function delete_favorite() {
+        $.ajax({
+            url: "/main/like_content/",
+            method: "POST",
+            data: { content_id: profile_feed_id },
+            success: function () {
+                location.reload("");
+            },
+            error: function () {
+                alert('좋아요 취소 실패')
+            }
+        });
+    }
+
+    //북마크 취소기능
+    function show_UD_bookmark(x) {
+        profile_feed_id = x;
+
+        $('.UD_modal_base').css({
+            display: 'flex',
+            top: window.pageYOffset + 'px'
+        });
+        $('.UD_bookmark').css({
+            display: 'block'
+        });
+        $(document.body).css({
+            overflow: 'hidden'
+        });
+    };
+
+    function delete_bookmark() {
+        $.ajax({
+            url: "/main/bookmark_content/",
+            method: "POST",
+            data: { content_id: profile_feed_id },
+            success: function () {
+                location.reload("");
+            },
+            error: function () {
+                alert('북마크 취소 실패')
+            }
+        });
+    };
+
+    // 프로필 설정 : 비밀번호 수정, 계정 삭제
+    function show_UD_account() {
+        $('.UD_modal_base').css({
+            display: 'flex',
+            top: window.pageYOffset + 'px'
+        });
+        $('.UD_account').css({
+            display: 'block'
+        });
+        $(document.body).css({
+            overflow: 'hidden'
+        });
+    };
+
+    function UD_same_password() {
+        
+        $.ajax({
+            url: "/user/profile/verify_pw",
+            method: "POST",
+            data: {verify_pw: $('.UD_account_password').val()},
+            success: function () {
+                location.replace('/user/change_account')
+            },
+            error: function (data) {
+                alert(data['responseJSON']['message'])
+            }
+        });
+    };
+</script>
+{% endblock %}
