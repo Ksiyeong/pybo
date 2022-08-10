@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # Quick-start development settings - unsuitable for production
@@ -26,7 +26,6 @@ SECRET_KEY = 'django-insecure-ic!1c0^08-or82d*rpg0pp@r2u7hckju^!y_6hl8(&rz9bvxw=
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '13.125.246.226'
 ]
 
 
