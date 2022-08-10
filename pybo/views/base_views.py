@@ -7,6 +7,7 @@ from ..models import Question
 
 
 def index(request):
+    3/0
     page = request.GET.get('page', '1') # 페이지 pybo/?page=1
     kw = request.GET.get('kw', '') # 검색어
     question_list = Question.objects.order_by('-create_date')
