@@ -1,5 +1,5 @@
 from django import forms
-from main.models import Diary
+from main.models import Diary, Reply
 
 
 class DiaryForm(forms.ModelForm):
@@ -10,4 +10,13 @@ class DiaryForm(forms.ModelForm):
         labels = {
             'subject': '제목', # 필드명 보여줄때 지정가능
             'content': '내용',
-        } 
+        }
+
+
+class ReplyForm(forms.ModelForm):
+    class Meta:
+        model = Reply
+        fields = ['content']
+        labels = {
+            'content' : '댓글 내용'
+        }
