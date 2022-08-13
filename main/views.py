@@ -1,10 +1,11 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Diary
+from .models import Diary, Reply
 from django.utils import timezone
 from .forms import DiaryForm, ReplyForm
 from django.core.paginator import Paginator
 from django.http import HttpResponseNotAllowed
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 
 
@@ -33,6 +34,35 @@ def diary_create(request):
     return render(request, 'main/diary_form.html', context)
 
 
+@login_required(login_url='common:login')
+def diary_modify(request, diary_id):
+    diary = get_object_or_404(Diary, pk=diary_id)
+    if request.user != diary.author:
+        messages.error(request, '권한이 없습니다.')
+        return redirect('main:detail', diary_id=diary.id)
+    if request.method == 'POST':
+        form = DiaryForm(request.POST, instance=diary)
+        if form.is_valid():
+            diary = form.save(commit=False)
+            diary.modify_date = timezone.now()
+            diary.save()
+            return redirect('main:detail', diary_id=diary.id)
+    else:
+        form = DiaryForm(instance=diary)
+    context = {'form': form}
+    return render(request, 'main/diary_form.html', context)
+
+
+@login_required(login_url='common:login')
+def diary_delete(request, diary_id):
+    diary = get_object_or_404(Diary, pk=diary_id)
+    if request.user != diary.author:
+        messages.error(request, '권한이 없습니다.')
+        return redirect('main:detail', diary_id=diary.id)
+    diary.delete()
+    return redirect('index')
+
+
 def detail(request, diary_id):
     diary = get_object_or_404(Diary, pk=diary_id)
     context = {'diary' : diary}
@@ -55,3 +85,32 @@ def reply_create(request, diary_id):
         return HttpResponseNotAllowed('Only POST is possible.')
     context = {'diary': diary, 'form': form}
     return render(request, 'main/diary_detail.html', context)
+
+
+@login_required(login_url='common:login')
+def reply_modify(request, reply_id):
+    reply = get_object_or_404(Reply, pk=reply_id)
+    if request.user != reply.author:
+        messages.error(request, '권한이 없습니다.')
+        return redirect('main:detail', diary_id=reply.diary.id)
+    if request.method == 'POST':
+        form = ReplyForm(request.POST, instance=reply)
+        if form.is_valid():
+            reply = form.save(commit=False)
+            reply.modify_date = timezone.now()
+            reply.save()
+            return redirect('main:detail', diary_id=reply.diary.id)
+    else:
+        form = DiaryForm(instance=reply)
+    context = {'reply': reply, 'form': form}
+    return render(request, 'main/reply_form.html', context)
+
+
+@login_required(login_url='common:login')
+def reply_delete(request, reply_id):
+    reply = get_object_or_404(Reply, pk=reply_id)
+    if request.user != reply.author:
+        messages.error(request, '권한이 없습니다.')
+    else:
+        reply.delete()
+    return redirect('main:detail', diary_id=reply.diary.id)
