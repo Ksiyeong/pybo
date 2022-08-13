@@ -53,3 +53,11 @@ def reply_delete(request, reply_id):
     else:
         reply.delete()
     return redirect('main:detail', diary_id=reply.diary.id)
+
+
+@login_required(login_url='common:login')
+def reply_vote(request, reply_id):
+    reply = get_object_or_404(Reply, pk=reply_id)
+    reply.voter.add(request.user)
+    print(reply.voter.reply)
+    return redirect('main:detail', diary_id=reply.diary.id)

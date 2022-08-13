@@ -50,3 +50,10 @@ def diary_delete(request, diary_id):
         return redirect('main:detail', diary_id=diary.id)
     diary.delete()
     return redirect('index')
+
+
+@login_required(login_url='common:login')
+def diary_vote(request, diary_id):
+    diary = get_object_or_404(Diary, pk=diary_id)
+    diary.voter.add(request.user)
+    return redirect('main:detail', diary_id=diary.id)

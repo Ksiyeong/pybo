@@ -31,6 +31,9 @@
                 </div>
             </div>
             <div class="my-3">
+                <a href="{% url 'main:diary_vote' diary.id  %}" class="recommend btn btn-sm btn-outline-secondary"> 추천
+                    <span class="badge rounded-pill bg-success">{{ diary.voter.count }}</span>
+                </a>
                 {% if request.user == diary.author %}
                 <a href="{% url 'main:diary_modify' diary.id  %}" class="btn btn-sm btn-outline-secondary">수정</a>
                 <a href="javascript:void(0)" data-uri="{% url 'main:diary_delete' diary.id  %}"
@@ -53,15 +56,19 @@
                 </div>
                 {% endif %}
                 <div class="badge bg-light text-dark p-2 text-start">
-                    <div class="mb-2">{{ diary.author.username }}</div>
+                    <div class="mb-2">{{ reply.author.username }}</div>
                     <div>{{ reply.create_date }}</div>
                 </div>
             </div>
 
             <div class="my-3">
+                <a href="{% url 'main:reply_vote' reply.id  %}" class="recommend btn btn-sm btn-outline-secondary"> 추천
+                    <span class="badge rounded-pill bg-success">{{ reply.voter.count }}</span>
+                </a>
                 {% if request.user == reply.author %}
                 <a href="{% url 'main:reply_modify' reply.id  %}" class="btn btn-sm btn-outline-secondary">수정</a>
-                <a href="javascript:void(0)" data-uri="{% url 'main:reply_delete' reply.id  %}" class="delete btn btn-sm btn-outline-secondary">삭제</a>
+                <a href="javascript:void(0)" data-uri="{% url 'main:reply_delete' reply.id  %}"
+                    class="delete btn btn-sm btn-outline-secondary">삭제</a>
                 {% endif %}
             </div>
         </div>
