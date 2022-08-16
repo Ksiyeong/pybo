@@ -45,6 +45,7 @@
     <!-- 댓글 -->
     <h5 class="border-bottom my-3 py-2">{{diary.reply_set.count}}개의 댓글이 있습니다.</h5>
     {% for reply in diary.reply_set.all %}
+    <a id="reply_{{ reply.id }}"></a>
     <div class="card my-3">
         <div class="card-body">
             <div class="card-text" style="white-space: pre-line;">{{ reply.content }}</div>

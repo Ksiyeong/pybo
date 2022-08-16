@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseNotAllowed
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect, resolve_url
 from django.utils import timezone
 from ..forms import ReplyForm
 from ..models import Diary, Reply
@@ -19,7 +19,7 @@ def reply_create(request, diary_id):
             reply.create_date = timezone.now()
             reply.diary = diary
             reply.save()
-            return redirect('main:detail', diary_id=diary.id)
+            return redirect('{}#reply_{}'.format(resolve_url('main:detail', diary_id=diary.id), reply.id)) # 앵커
     else:
         return HttpResponseNotAllowed('Only POST is possible.')
     context = {'diary': diary, 'form': form}
@@ -38,7 +38,7 @@ def reply_modify(request, reply_id):
             reply = form.save(commit=False)
             reply.modify_date = timezone.now()
             reply.save()
-            return redirect('main:detail', diary_id=reply.diary.id)
+            return redirect('{}#reply_{}'.format(resolve_url('main:detail', diary_id=reply.diary.id), reply.id))
     else:
         form = ReplyForm(instance=reply)
     context = {'reply': reply, 'form': form}
@@ -59,5 +59,4 @@ def reply_delete(request, reply_id):
 def reply_vote(request, reply_id):
     reply = get_object_or_404(Reply, pk=reply_id)
     reply.voter.add(request.user)
-
-    return redirect('main:detail', diary_id=reply.diary.id)
+    return redirect('{}#reply_{}'.format(resolve_url('main:detail', diary_id=reply.diary.id), reply.id))
