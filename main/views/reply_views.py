@@ -58,5 +58,8 @@ def reply_delete(request, reply_id):
 @login_required(login_url='common:login')
 def reply_vote(request, reply_id):
     reply = get_object_or_404(Reply, pk=reply_id)
-    reply.voter.add(request.user)
+    if reply.voter.filter(id=request.user.id).exists():
+        reply.voter.remove(request.user)
+    else:
+        reply.voter.add(request.user)
     return redirect('{}#reply_{}'.format(resolve_url('main:detail', diary_id=reply.diary.id), reply.id))

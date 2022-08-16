@@ -55,5 +55,8 @@ def diary_delete(request, diary_id):
 @login_required(login_url='common:login')
 def diary_vote(request, diary_id):
     diary = get_object_or_404(Diary, pk=diary_id)
-    diary.voter.add(request.user)
+    if diary.voter.filter(id=request.user.id).exists():
+        diary.voter.remove(request.user)
+    else:
+        diary.voter.add(request.user)
     return redirect('main:detail', diary_id=diary.id)
