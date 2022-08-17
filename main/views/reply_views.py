@@ -19,7 +19,7 @@ def reply_create(request, diary_id):
             reply.create_date = timezone.now()
             reply.diary = diary
             reply.save()
-            return redirect('{}#reply_{}'.format(resolve_url('main:detail', diary_id=diary.id), reply.id)) # 앵커
+            return redirect('{}?page=-1#reply_{}'.format(resolve_url('main:detail', diary_id=diary.id), reply.id)) # 앵커 + ?page=-1 마지막페이지
     else:
         return HttpResponseNotAllowed('Only POST is possible.')
     context = {'diary': diary, 'form': form}

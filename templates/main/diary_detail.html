@@ -44,7 +44,7 @@
     </div>
     <!-- 댓글 -->
     <h5 class="border-bottom my-3 py-2">{{diary.reply_set.count}}개의 댓글이 있습니다.</h5>
-    {% for reply in diary.reply_set.all %}
+    {% for reply in reply_list %}
     <a id="reply_{{ reply.id }}"></a>
     <div class="card my-3">
         <div class="card-body">
@@ -75,6 +75,46 @@
         </div>
     </div>
     {% endfor %}
+
+    <!-- 페이징처리 시작 -->
+    <ul class="pagination justify-content-center">
+        <!-- 이전페이지 -->
+        {% if reply_list.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ reply_list.previous_page_number }}">이전</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">이전</a>
+        </li>
+        {% endif %}
+        <!-- 페이지리스트 -->
+        {% for page_number in reply_list.paginator.page_range %}
+        {% if page_number >= reply_list.number|add:-5 and reply_list.number|add:5 >= page_number %}
+        {% if page_number == reply_list.number %}
+        <li class="page-item active" aria-current="page">
+            <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
+        </li>
+        {% else %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
+        </li>
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+        <!-- 다음페이지 -->
+        {% if reply_list.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ reply_list.next_page_number }}">다음</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">다음</a>
+        </li>
+        {% endif %}
+    </ul>
+    <!-- 페이징처리 끝 -->
+
     <!-- 댓글 등록 -->
     <form action="{% url 'main:reply_create' diary.id %}" method="post" class="my-3">
         {% csrf_token %}
