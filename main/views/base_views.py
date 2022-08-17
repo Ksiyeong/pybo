@@ -29,7 +29,6 @@ def detail(request, diary_id):
     page = request.GET.get('page', '1')
     paginator = Paginator(diary.reply_set.all(), 10)
     page_obj = paginator.get_page(page)
-    last_page = len(paginator.page_range)
 
     context = {'diary': diary, 'reply_list': page_obj, 'page': page}
     return render(request, 'main/diary_detail.html', context)

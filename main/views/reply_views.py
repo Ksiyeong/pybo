@@ -27,7 +27,7 @@ def reply_create(request, diary_id):
 
 
 @login_required(login_url='common:login')
-def reply_modify(request, reply_id):
+def reply_modify(request, reply_id, now_page=1):
     reply = get_object_or_404(Reply, pk=reply_id)
     if request.user != reply.author:
         messages.error(request, '권한이 없습니다.')
@@ -38,7 +38,8 @@ def reply_modify(request, reply_id):
             reply = form.save(commit=False)
             reply.modify_date = timezone.now()
             reply.save()
-            return redirect('{}#reply_{}'.format(resolve_url('main:detail', diary_id=reply.diary.id), reply.id))
+            # return redirect('{}#reply_{}'.format(resolve_url('main:detail', diary_id=reply.diary.id), reply.id))
+            return redirect(f'/main/{reply.diary.id}/?page={now_page}#reply_{reply.id}')
     else:
         form = ReplyForm(instance=reply)
     context = {'reply': reply, 'form': form}
@@ -46,20 +47,22 @@ def reply_modify(request, reply_id):
 
 
 @login_required(login_url='common:login')
-def reply_delete(request, reply_id):
+def reply_delete(request, reply_id, now_page=1):
     reply = get_object_or_404(Reply, pk=reply_id)
     if request.user != reply.author:
         messages.error(request, '권한이 없습니다.')
     else:
         reply.delete()
-    return redirect('main:detail', diary_id=reply.diary.id)
+    # return redirect('main:detail', diary_id=reply.diary.id)
+    return redirect(f'/main/{reply.diary.id}/?page={now_page}')
 
 
 @login_required(login_url='common:login')
-def reply_vote(request, reply_id):
+def reply_vote(request, reply_id, now_page=1):
     reply = get_object_or_404(Reply, pk=reply_id)
     if reply.voter.filter(id=request.user.id).exists():
         reply.voter.remove(request.user)
     else:
         reply.voter.add(request.user)
-    return redirect('{}#reply_{}'.format(resolve_url('main:detail', diary_id=reply.diary.id), reply.id))
+    # return redirect('{}#reply_{}'.format(resolve_url('main:detail', diary_id=reply.diary.id), reply.id))
+    return redirect(f'/main/{reply.diary.id}/?page={now_page}#reply_{reply.id}')

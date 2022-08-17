@@ -63,12 +63,12 @@
             </div>
 
             <div class="my-3">
-                <a href="{% url 'main:reply_vote' reply.id  %}" class="recommend btn btn-sm btn-outline-secondary"> 추천
+                <a href="{% url 'main:reply_vote' reply_id=reply.id now_page=reply_list.number %}" class="recommend btn btn-sm btn-outline-secondary"> 추천
                     <span class="badge rounded-pill bg-success">{{ reply.voter.count }}</span>
                 </a>
                 {% if request.user == reply.author %}
-                <a href="{% url 'main:reply_modify' reply.id  %}" class="btn btn-sm btn-outline-secondary">수정</a>
-                <a href="javascript:void(0)" data-uri="{% url 'main:reply_delete' reply.id  %}"
+                <a href="{% url 'main:reply_modify' reply_id=reply.id now_page=reply_list.number %}" class="btn btn-sm btn-outline-secondary">수정</a>
+                <a href="javascript:void(0)" data-uri="{% url 'main:reply_delete' reply_id=reply.id now_page=reply_list.number %}"
                     class="delete btn btn-sm btn-outline-secondary">삭제</a>
                 {% endif %}
             </div>
