@@ -5,10 +5,19 @@ from django.db.models import Q, Count
 
 
 
-def index(request):
+def index(request, category=None):
     page = request.GET.get('page', '1') # 페이지를 읽어온다. 없을경우 1을 뱉는다 ?page =
     kw = request.GET.get('kw', '') # 검색어
-    diary_list = Diary.objects.order_by('-create_date')
+
+    if category == 'QnA':
+        diary_list = Diary.objects.filter(category_id=2).order_by('-create_date')
+    elif category == 'freeboard':
+        diary_list = Diary.objects.filter(category_id=3).order_by('-create_date')
+    elif category == 'diary':
+        diary_list = Diary.objects.filter(category_id=1).order_by('-create_date')
+    else:
+        diary_list = Diary.objects.order_by('-create_date')
+
     if kw:
         diary_list = diary_list.filter( # icontains 대소문자 구분없음, 있음은 contains
             Q(subject__icontains=kw) | # 제목 검색
@@ -19,7 +28,8 @@ def index(request):
         ).distinct() # 중복제거
     paginator = Paginator(diary_list, 10) # 한페이지에 보여줄 페이지 갯수 10
     page_obj = paginator.get_page(page) # 페이지 오브젝트에 담아서 보여줌
-    context = {'diary_list' : page_obj, 'page': page, 'kw': kw}
+    context = {'category': category, 'diary_list': page_obj, 'page': page, 'kw': kw}
+
     return render(request, 'main/diary_list.html', context)
 
 

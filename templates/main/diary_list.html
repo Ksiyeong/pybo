@@ -5,7 +5,7 @@
 <div class="container my-3">
     <div class="row my-3">
         <div class="col-6">
-            <a href="{% url 'main:diary_create' %}" class="btn btn-primary">일기쓰기</a>
+            <a href="{% url 'main:diary_create' %}" class="btn btn-primary">글쓰기</a>
         </div>
         <div class="col-6">
             <div class="input-group">
@@ -87,7 +87,7 @@
     </ul>
     <!-- 페이징처리 끝 -->
 </div>
-<form id="searchForm" method="get" action="{% url 'index' %}">
+<form id="searchForm" method="get" action="{% url 'main:index' category %}">
     <input type="hidden" id="kw" name="kw" value="{{ kw|default_if_none:'' }}">
     <input type="hidden" id="page" name="page" value="{{ page }}">
 </form>

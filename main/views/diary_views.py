@@ -16,7 +16,7 @@ def diary_create(request):
             diary.author = request.user # author 값에 로그인중인 유저정보를 담는다
             diary.create_date = timezone.now() # 현재시간 추가
             diary.save() # 최종 저장
-            return redirect('main:index')
+            return redirect('/')
     else:
         form = DiaryForm()
     context = {'form' : form}

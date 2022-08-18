@@ -5,8 +5,8 @@ from .views import base_views, diary_views, reply_views
 app_name = 'main'
 
 urlpatterns = [
-    path('', base_views.index, name='index'),
-    path('<int:diary_id>/', base_views.detail, name='detail'),
+    path('<str:category>/', base_views.index, name='index'),
+    path('detail/<int:diary_id>/', base_views.detail, name='detail'),
     
     path('diary/create/', diary_views.diary_create, name='diary_create'),
     path('diary/modify/<int:diary_id>/', diary_views.diary_modify, name='diary_modify'),

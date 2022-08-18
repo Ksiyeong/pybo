@@ -22,5 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('main/', include('main.urls')),
     path('common/', include('common.urls')),
-    path('', base_views.index, name='index'), # '/' 에 해당하는 path
+    path('', base_views.index), # '/' 에 해당하는 path
 ]
