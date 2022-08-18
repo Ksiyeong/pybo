@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator
 from ..models import Diary
-from django.db.models import Q
+from django.db.models import Q, Count
 
 
 
@@ -27,8 +27,16 @@ def detail(request, diary_id):
     diary = get_object_or_404(Diary, pk=diary_id)
 
     page = request.GET.get('page', '1')
-    paginator = Paginator(diary.reply_set.all(), 10)
+    kw = request.GET.get('kw', 'first') # 정렬방법
+
+    if kw == 'voter': # 추천순
+        paginator = Paginator(diary.reply_set.all().annotate(num_votes=Count('voter')).order_by('-num_votes'), 10)
+    elif kw == 'latest': # 최신순
+        paginator = Paginator(diary.reply_set.all().order_by('-id'), 10)
+    else: # 등록순
+        paginator = Paginator(diary.reply_set.all(), 10)
+
     page_obj = paginator.get_page(page)
 
-    context = {'diary': diary, 'reply_list': page_obj, 'page': page}
+    context = {'diary': diary, 'reply_list': page_obj, 'page': page, 'kw': kw}
     return render(request, 'main/diary_detail.html', context)

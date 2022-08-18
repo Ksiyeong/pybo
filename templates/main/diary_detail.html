@@ -43,7 +43,17 @@
         </div>
     </div>
     <!-- 댓글 -->
+
+    <div class="col-4 d-flex align-items-center">
+        <select id="sort_kind">
+            <option value="first">등록순</option>
+            <option value="latest">최신순</option>
+            <option value="voter">추천순</option>
+        </select>
+        <button class="btn btn-sm btn-outline-secondary mx-1" type="button" id="btn_sort">정렬</button>
+    </div>
     <h5 class="border-bottom my-3 py-2">{{diary.reply_set.count}}개의 댓글이 있습니다.</h5>
+
     {% for reply in reply_list %}
     <a id="reply_{{ reply.id }}"></a>
     <div class="card my-3">
@@ -63,12 +73,15 @@
             </div>
 
             <div class="my-3">
-                <a href="{% url 'main:reply_vote' reply_id=reply.id now_page=reply_list.number %}" class="recommend btn btn-sm btn-outline-secondary"> 추천
+                <a href="{% url 'main:reply_vote' reply_id=reply.id now_page=reply_list.number %}"
+                    class="recommend btn btn-sm btn-outline-secondary"> 추천
                     <span class="badge rounded-pill bg-success">{{ reply.voter.count }}</span>
                 </a>
                 {% if request.user == reply.author %}
-                <a href="{% url 'main:reply_modify' reply_id=reply.id now_page=reply_list.number %}" class="btn btn-sm btn-outline-secondary">수정</a>
-                <a href="javascript:void(0)" data-uri="{% url 'main:reply_delete' reply_id=reply.id now_page=reply_list.number %}"
+                <a href="{% url 'main:reply_modify' reply_id=reply.id now_page=reply_list.number %}"
+                    class="btn btn-sm btn-outline-secondary">수정</a>
+                <a href="javascript:void(0)"
+                    data-uri="{% url 'main:reply_delete' reply_id=reply.id now_page=reply_list.number %}"
                     class="delete btn btn-sm btn-outline-secondary">삭제</a>
                 {% endif %}
             </div>
@@ -81,11 +94,11 @@
         <!-- 이전페이지 -->
         {% if reply_list.has_previous %}
         <li class="page-item">
-            <a class="page-link" href="?page={{ reply_list.previous_page_number }}">이전</a>
+            <a class="page-link" data-page="{{ reply_list.previous_page_number }}" href="javascript:void(0)">이전</a>
         </li>
         {% else %}
         <li class="page-item disabled">
-            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">이전</a>
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="javascript:void(0)">이전</a>
         </li>
         {% endif %}
         <!-- 페이지리스트 -->
@@ -93,11 +106,11 @@
         {% if page_number >= reply_list.number|add:-5 and reply_list.number|add:5 >= page_number %}
         {% if page_number == reply_list.number %}
         <li class="page-item active" aria-current="page">
-            <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
+            <a class="page-link" data-page="{{ page_number }}" href="javascript:void(0)">{{ page_number }}</a>
         </li>
         {% else %}
         <li class="page-item">
-            <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
+            <a class="page-link" data-page="{{ page_number }}" href="javascript:void(0)">{{ page_number }}</a>
         </li>
         {% endif %}
         {% endif %}
@@ -105,11 +118,11 @@
         <!-- 다음페이지 -->
         {% if reply_list.has_next %}
         <li class="page-item">
-            <a class="page-link" href="?page={{ reply_list.next_page_number }}">다음</a>
+            <a class="page-link" data-page="{{ reply_list.next_page_number }}" href="javascript:void(0)">다음</a>
         </li>
         {% else %}
         <li class="page-item disabled">
-            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">다음</a>
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="javascript:void(0)">다음</a>
         </li>
         {% endif %}
     </ul>
@@ -127,11 +140,15 @@
         <input type="submit" value="댓글등록" class="btn btn-primary">
     </form>
 </div>
-
+<form id="sort_kind_form" method="get" action="{% url 'main:detail' diary.id %}">
+    <input type="hidden" id="kw" name="kw" value="{{ kw|default_if_none:'' }}">
+    <input type="hidden" id="page" name="page" value="{{ page }}">
+</form>
 {% endblock %}
 
 {% block script %}
 <script type='text/javascript'>
+    // 댓글삭제
     const delete_elements = document.getElementsByClassName("delete");
     Array.from(delete_elements).forEach(function (element) {
         element.addEventListener('click', function () {
@@ -139,6 +156,23 @@
                 location.href = this.dataset.uri;
             };
         });
+    });
+    
+    // 페이징 및 댓글정렬
+    $('#sort_kind').val($('#kw').val()).prop("selected", true);
+
+    const page_elements = document.getElementsByClassName("page-link");
+    Array.from(page_elements).forEach(function (element) {
+        element.addEventListener('click', function() {
+            document.getElementById('page').value = this.dataset.page;
+            document.getElementById('sort_kind_form').submit();
+        });
+    });
+    const btn_sort = document.getElementById("btn_sort");
+    btn_sort.addEventListener('click', function() {
+        document.getElementById('kw').value = document.getElementById('sort_kind').value;
+        document.getElementById('page').value = 1;  // 검색버튼을 클릭할 경우 1페이지부터 조회한다.
+        document.getElementById('sort_kind_form').submit();
     });
 </script>
 {% endblock %}
