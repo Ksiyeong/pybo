@@ -5,6 +5,7 @@ from django.shortcuts import render, get_object_or_404, redirect, resolve_url
 from django.utils import timezone
 from ..forms import ReplyForm
 from ..models import Diary, Reply
+from math import ceil # 소수점올림 -> 페이지 구하려고
 
 
 
@@ -19,7 +20,10 @@ def reply_create(request, diary_id):
             reply.create_date = timezone.now()
             reply.diary = diary
             reply.save()
-            return redirect('{}?page=-1#reply_{}'.format(resolve_url('main:detail', diary_id=diary.id), reply.id)) # 앵커 + ?page=-1 마지막페이지
+            # return redirect('{}?page=0#reply_{}'.format(resolve_url('main:detail', diary_id=diary.id), reply.id)) # 앵커 + ?page=-1 마지막페이지
+            return redirect(resolve_url('main:detail', diary_id=diary.id) + '?page=0#reply_' + str(reply.id))
+            # main/diary_id + ?page=0#reply_ + reply.id
+            # 리졸브로 만든 주소와 받아온 댓글번호 사이에 포멧함수로 끼워넣음 -> 리디렉트
     else:
         return HttpResponseNotAllowed('Only POST is possible.')
     context = {'diary': diary, 'form': form}
@@ -35,13 +39,19 @@ def reply_modify(request, reply_id):
     if request.method == 'POST':
         form = ReplyForm(request.POST, instance=reply)
         if form.is_valid():
+            page = ceil((list(reply.diary.reply_set.all()).index(reply)+1)/10)
             reply = form.save(commit=False)
             reply.modify_date = timezone.now()
             reply.save()
-            return redirect('{}#reply_{}'.format(resolve_url('main:detail', diary_id=reply.diary.id), reply.id))
+            return redirect('{}?page={}#reply_{}'.format(
+                resolve_url('main:detail', diary_id=reply.diary.id),
+                page,
+                reply.id
+            ))
     else:
         form = ReplyForm(instance=reply)
     context = {'reply': reply, 'form': form}
+
     return render(request, 'main/reply_form.html', context)
 
 
@@ -58,8 +68,13 @@ def reply_delete(request, reply_id):
 @login_required(login_url='common:login')
 def reply_vote(request, reply_id):
     reply = get_object_or_404(Reply, pk=reply_id)
+    page = ceil((list(reply.diary.reply_set.all()).index(reply)+1)/10)
     if reply.voter.filter(id=request.user.id).exists():
         reply.voter.remove(request.user)
     else:
         reply.voter.add(request.user)
-    return redirect('{}#reply_{}'.format(resolve_url('main:detail', diary_id=reply.diary.id), reply.id))
+    return redirect('{}?page={}#reply_{}'.format(
+                resolve_url('main:detail', diary_id=reply.diary.id),
+                page,
+                reply.id
+            ))

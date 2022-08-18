@@ -73,15 +73,12 @@
             </div>
 
             <div class="my-3">
-                <a href="{% url 'main:reply_vote' reply.id %}"
-                    class="recommend btn btn-sm btn-outline-secondary"> 추천
+                <a href="{% url 'main:reply_vote' reply.id %}" class="recommend btn btn-sm btn-outline-secondary"> 추천
                     <span class="badge rounded-pill bg-success">{{ reply.voter.count }}</span>
                 </a>
                 {% if request.user == reply.author %}
-                <a href="{% url 'main:reply_modify' reply.id %}"
-                    class="btn btn-sm btn-outline-secondary">수정</a>
-                <a href="javascript:void(0)"
-                    data-uri="{% url 'main:reply_delete' reply.id %}"
+                <a href="{% url 'main:reply_modify' reply.id %}" class="btn btn-sm btn-outline-secondary">수정</a>
+                <a href="javascript:void(0)" data-uri="{% url 'main:reply_delete' reply.id %}"
                     class="delete btn btn-sm btn-outline-secondary">삭제</a>
                 {% endif %}
             </div>
@@ -157,19 +154,19 @@
             };
         });
     });
-    
+
     // 페이징 및 댓글정렬
     $('#sort_kind').val($('#kw').val()).prop("selected", true);
 
     const page_elements = document.getElementsByClassName("page-link");
     Array.from(page_elements).forEach(function (element) {
-        element.addEventListener('click', function() {
+        element.addEventListener('click', function () {
             document.getElementById('page').value = this.dataset.page;
             document.getElementById('sort_kind_form').submit();
         });
     });
     const btn_sort = document.getElementById("btn_sort");
-    btn_sort.addEventListener('click', function() {
+    btn_sort.addEventListener('click', function () {
         document.getElementById('kw').value = document.getElementById('sort_kind').value;
         document.getElementById('page').value = 1;  // 검색버튼을 클릭할 경우 1페이지부터 조회한다.
         document.getElementById('sort_kind_form').submit();
