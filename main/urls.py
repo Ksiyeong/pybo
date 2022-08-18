@@ -14,7 +14,7 @@ urlpatterns = [
     path('diary/vote/<int:diary_id>/', diary_views.diary_vote, name='diary_vote'),
 
     path('reply/create/<int:diary_id>/', reply_views.reply_create, name='reply_create'),
-    path('reply/modify/<int:reply_id>/?page=<int:now_page>/', reply_views.reply_modify, name='reply_modify'),
-    path('reply/delete/<int:reply_id>/?page=<int:now_page>/', reply_views.reply_delete, name='reply_delete'),
-    path('reply/vote/<int:reply_id>/?page=<int:now_page>/', reply_views.reply_vote, name='reply_vote'),
+    path('reply/modify/<int:reply_id>/', reply_views.reply_modify, name='reply_modify'),
+    path('reply/delete/<int:reply_id>/', reply_views.reply_delete, name='reply_delete'),
+    path('reply/vote/<int:reply_id>/', reply_views.reply_vote, name='reply_vote'),
 ]
