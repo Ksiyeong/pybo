@@ -5,7 +5,7 @@
 <div class="container my-3">
     <div class="row my-3">
         <div class="col-6">
-            <a href="{% url 'main:diary_create' %}" class="btn btn-primary">글쓰기</a>
+            <a href="{% url 'main:posts_create' %}" class="btn btn-primary">글쓰기</a>
         </div>
         <div class="col-6">
             <div class="input-group">
@@ -26,19 +26,19 @@
             </tr>
         </thead>
         <tbody>
-            {% if diary_list %}
-            {% for diary in diary_list %}
+            {% if posts_list %}
+            {% for posts in posts_list %}
             <tr class="text-center">
                 <!-- 번호 = 전체건수 - 시작인덱스 - 현재인덱스 + 1 -->
-                <td>{{ diary_list.paginator.count|sub:diary_list.start_index|sub:forloop.counter0|add:1 }}</td>
+                <td>{{ posts_list.paginator.count|sub:posts_list.start_index|sub:forloop.counter0|add:1 }}</td>
                 <td class="text-start">
-                    <a href="{% url 'main:detail' diary.id %}">{{ diary.subject }}</a>
-                    {% if diary.reply_set.count > 0 %}
-                    <span class="text-danger small mx-2">{{ diary.reply_set.count }}</span>
+                    <a href="{% url 'main:detail' posts.id %}">{{ posts.subject }}</a>
+                    {% if posts.reply_set.count > 0 %}
+                    <span class="text-danger small mx-2">{{ posts.reply_set.count }}</span>
                     {% endif %}
                 </td>
-                <td>{{ diary.author.username }}</td>
-                <td>{{ diary.create_date }}</td>
+                <td>{{ posts.author.username }}</td>
+                <td>{{ posts.create_date }}</td>
             </tr>
             {% endfor %}
             {% else %}
@@ -51,9 +51,9 @@
     <!-- 페이징처리 시작 -->
     <ul class="pagination justify-content-center">
         <!-- 이전페이지 -->
-        {% if diary_list.has_previous %}
+        {% if posts_list.has_previous %}
         <li class="page-item">
-            <a class="page-link" data-page="{{ diary_list.previous_page_number }}" href="javascript:void(0)">이전</a>
+            <a class="page-link" data-page="{{ posts_list.previous_page_number }}" href="javascript:void(0)">이전</a>
         </li>
         {% else %}
         <li class="page-item disabled">
@@ -61,9 +61,9 @@
         </li>
         {% endif %}
         <!-- 페이지리스트 -->
-        {% for page_number in diary_list.paginator.page_range %}
-        {% if page_number >= diary_list.number|add:-5 and diary_list.number|add:5 >= page_number %}
-        {% if page_number == diary_list.number %}
+        {% for page_number in posts_list.paginator.page_range %}
+        {% if page_number >= posts_list.number|add:-5 and posts_list.number|add:5 >= page_number %}
+        {% if page_number == posts_list.number %}
         <li class="page-item active" aria-current="page">
             <a class="page-link" data-page="{{ page_number }}" href="javascript:void(0)">{{ page_number }}</a>
         </li>
@@ -75,9 +75,9 @@
         {% endif %}
         {% endfor %}
         <!-- 다음페이지 -->
-        {% if diary_list.has_next %}
+        {% if posts_list.has_next %}
         <li class="page-item">
-            <a class="page-link" data-page="{{ diary_list.next_page_number }}" href="javascript:void(0)">다음</a>
+            <a class="page-link" data-page="{{ posts_list.next_page_number }}" href="javascript:void(0)">다음</a>
         </li>
         {% else %}
         <li class="page-item disabled">

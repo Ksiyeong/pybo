@@ -1,11 +1,11 @@
 from django import forms
-from main.models import Diary, Reply
+from main.models import Posts, Reply
 
 
-class DiaryForm(forms.ModelForm):
+class PostsForm(forms.ModelForm):
     class Meta:
-        model = Diary  # 사용할 모델
-        fields = ['category', 'subject', 'content']  # DiaryForm에서 사용할 Diary 모델의 속성
+        model = Posts  # 사용할 모델
+        fields = ['category', 'subject', 'content']  # PostsForm에서 사용할 Posts 모델의 속성
 
         labels = {
             'category': '카테고리',

@@ -14,29 +14,29 @@
     </div>
     {% endif %}
     <!-- 일기 -->
-    <h2 class="border-bottom py-2">{{ diary.subject }}</h2>
+    <h2 class="border-bottom py-2">{{ posts.subject }}</h2>
     <div class="card my-3">
         <div class="card-body">
-            <div class="card-text" style="white-space: pre-line;">{{ diary.content }}</div>
+            <div class="card-text" style="white-space: pre-line;">{{ posts.content }}</div>
             <div class="d-flex justify-content-end">
-                {% if diary.modify_date %}
+                {% if posts.modify_date %}
                 <div class="badge bg-light text-dark p-2 text-start mx-3">
                     <div class="mb-2">수정됨</div>
-                    <div>{{ diary.modify_date }}</div>
+                    <div>{{ posts.modify_date }}</div>
                 </div>
                 {% endif %}
                 <div class="badge bg-light text-dark p-2 text-start">
-                    <div class="mb-2">{{ diary.author.username }}</div>
-                    <div>{{ diary.create_date }}</div>
+                    <div class="mb-2">{{ posts.author.username }}</div>
+                    <div>{{ posts.create_date }}</div>
                 </div>
             </div>
             <div class="my-3">
-                <a href="{% url 'main:diary_vote' diary.id  %}" class="recommend btn btn-sm btn-outline-secondary"> 추천
-                    <span class="badge rounded-pill bg-success">{{ diary.voter.count }}</span>
+                <a href="{% url 'main:posts_vote' posts.id  %}" class="recommend btn btn-sm btn-outline-secondary"> 추천
+                    <span class="badge rounded-pill bg-success">{{ posts.voter.count }}</span>
                 </a>
-                {% if request.user == diary.author %}
-                <a href="{% url 'main:diary_modify' diary.id  %}" class="btn btn-sm btn-outline-secondary">수정</a>
-                <a href="javascript:void(0)" data-uri="{% url 'main:diary_delete' diary.id  %}"
+                {% if request.user == posts.author %}
+                <a href="{% url 'main:posts_modify' posts.id  %}" class="btn btn-sm btn-outline-secondary">수정</a>
+                <a href="javascript:void(0)" data-uri="{% url 'main:posts_delete' posts.id  %}"
                     class="delete btn btn-sm btn-outline-secondary">삭제</a>
                 {% endif %}
             </div>
@@ -52,7 +52,7 @@
         </select>
         <button class="btn btn-sm btn-outline-secondary mx-1" type="button" id="btn_sort">정렬</button>
     </div>
-    <h5 class="border-bottom my-3 py-2">{{diary.reply_set.count}}개의 댓글이 있습니다.</h5>
+    <h5 class="border-bottom my-3 py-2">{{posts.reply_set.count}}개의 댓글이 있습니다.</h5>
 
     {% for reply in reply_list %}
     <a id="reply_{{ reply.id }}"></a>
@@ -126,7 +126,7 @@
     <!-- 페이징처리 끝 -->
 
     <!-- 댓글 등록 -->
-    <form action="{% url 'main:reply_create' diary.id %}" method="post" class="my-3">
+    <form action="{% url 'main:reply_create' posts.id %}" method="post" class="my-3">
         {% csrf_token %}
         {% include "form_errors.html" %}
         <div class="mb-3">
@@ -137,7 +137,7 @@
         <input type="submit" value="댓글등록" class="btn btn-primary">
     </form>
 </div>
-<form id="sort_kind_form" method="get" action="{% url 'main:detail' diary.id %}">
+<form id="sort_kind_form" method="get" action="{% url 'main:detail' posts.id %}">
     <input type="hidden" id="kw" name="kw" value="{{ kw|default_if_none:'' }}">
     <input type="hidden" id="page" name="page" value="{{ page }}">
 </form>
