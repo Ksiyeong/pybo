@@ -1,5 +1,4 @@
-from multiprocessing import context
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from common.forms import UserForm
 from django.contrib.auth.models import User
 from .models import Profile
@@ -27,6 +26,9 @@ def signup(request):
 
 
 def userdetail(request, user_id):
-    
-    context = {}
-    return render(request, 'common/userdetail.html')
+    userdetail = get_object_or_404(User, pk=user_id)
+    posts_list = userdetail.author_posts.all().order_by('-create_date')
+    reply_list = userdetail.author_reply.all()
+
+    context = {'userdetail': userdetail, 'posts_list': posts_list, 'reply_list': reply_list}
+    return render(request, 'common/userdetail.html', context)
