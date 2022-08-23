@@ -1,8 +1,10 @@
+from multiprocessing import context
 from django.shortcuts import render, redirect, get_object_or_404
-from common.forms import UserForm
+from common.forms import Profile_ModifyForm, UserForm
 from django.contrib.auth.models import User
 from .models import Profile
-# from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 
 
@@ -32,3 +34,21 @@ def userdetail(request, user_id):
 
     context = {'userdetail': userdetail, 'posts_list': posts_list, 'reply_list': reply_list}
     return render(request, 'common/userdetail.html', context)
+
+
+@login_required(login_url='common:login')
+def profile_modify(request, user_id):
+    profile = get_object_or_404(Profile, pk=user_id)
+    print(profile.user_id)
+    if request.user != profile.user:
+        messages.error(request, '권한이 없습니다.')
+        return redirect('/')
+    if request.method == 'POST':
+        form = Profile_ModifyForm(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('common:userdetail', user_id=profile.user_id)
+    else:
+        form = Profile_ModifyForm(instance=profile)
+    context = {'form': form}
+    return render(request, 'common/profile_modify.html', context)
