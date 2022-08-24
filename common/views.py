@@ -61,3 +61,7 @@ def profile_delete(request, user_id):
         return redirect('/')
     user.delete()
     return redirect('/')
+
+
+def page_not_found(request, exception):
+    return render(request, 'common/404.html', {})

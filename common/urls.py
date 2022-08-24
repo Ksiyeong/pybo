@@ -14,3 +14,6 @@ urlpatterns = [
     path('userdetail/profile_modify/<int:user_id>/', views.profile_modify, name='profile_modify'),
     path('userdetail/profile_delete/<int:user_id>/', views.profile_delete, name='profile_delete'),
 ]
+
+
+handler404 = 'common.views.page_not_found'
