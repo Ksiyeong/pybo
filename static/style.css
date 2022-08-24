@@ -2,3 +2,8 @@
     border-bottom: 1px solid rgb(183, 183, 183);
     margin: 20px 0;
 }
+.modify-profile-title {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}

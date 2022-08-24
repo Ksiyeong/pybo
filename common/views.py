@@ -38,8 +38,7 @@ def userdetail(request, user_id):
 
 @login_required(login_url='common:login')
 def profile_modify(request, user_id):
-    profile = get_object_or_404(Profile, pk=user_id)
-    print(profile.user_id)
+    profile = get_object_or_404(Profile, user_id=user_id)
     if request.user != profile.user:
         messages.error(request, '권한이 없습니다.')
         return redirect('/')
@@ -52,3 +51,13 @@ def profile_modify(request, user_id):
         form = Profile_ModifyForm(instance=profile)
     context = {'form': form}
     return render(request, 'common/profile_modify.html', context)
+
+
+@login_required(login_url='common:login')
+def profile_delete(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+    if request.user != user:
+        messages.error(request, '권한이 없습니다.')
+        return redirect('/')
+    user.delete()
+    return redirect('/')
