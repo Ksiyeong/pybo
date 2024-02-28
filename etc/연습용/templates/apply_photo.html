@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>apply_photo</title>
+</head>
+<body>
+    <h1>사진 업로드 하기</h1>
+    <p>사진 업로드하기</p>
+    <div>
+        <form method="POST" enctype="multipart/form-data" action="{{ url_for('upload_done') }}">
+            <input type="file" name="file"/>
+            <input type="submit"/>
+        </form>
+    </div>
+</body>
+</html>
