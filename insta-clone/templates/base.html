@@ -1,0 +1,223 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>시영스타그램</title>
+
+    <!-- 구글아이콘 -->
+    <link
+        href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp"
+        rel="stylesheet">
+
+    <!-- 스타일시트 -->
+    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}?after">
+
+    <!-- 부트스트랩 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+
+    <!-- 제이쿼리 임포트 -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+</head>
+
+<body style="background-color: #efefef; width: 100%; display: flex; flex-direction: column; align-items: center;">
+    <div class="main_bar">
+        <div class="main_logo">
+            <a href="/main"><img style="height: 100%;"
+                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREtyPmQD7DAeXeJYJpkcLkchzYMXKUPaiE0g&usqp=CAU"
+                    alt=""></a>
+        </div>
+        <input class="search_bar" placeholder="검색" type="text">
+        <div class="nav_bar_icons">
+            <span class="material-icons-outlined"><a class="atag" href="/main">home</a></span>
+            <span class="material-icons-outlined">send</span>
+            <span class="material-icons-outlined" onclick="show_modal()">add_box</span>
+            <span class="material-icons-outlined">explore</span>
+            <span class="material-icons-outlined"
+                onclick="location.href='/user/profile/?btn=like'">favorite_border</span>
+
+            <div>
+                <a href="#" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img class="profile_img" style="width: 30px; height: 30px;
+                    margin-left: 15px;" src="{{user.profile_image}}">
+                </a>
+
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="/user/profile">프로필</a></li>
+                    <li><a class="dropdown-item" href="/user/profile/?btn=bookmark">저장됨</a></li>
+                    <li><a class="dropdown-item" href="#">모드 전환</a></li>
+                    <li><a class="dropdown-item" href="#">설정</a></li>
+                    <li><a class="dropdown-item" href="#">계정 전환</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item" href="/user/logout">로그아웃</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal_base">
+        <div class="modal_body">
+            <div class="modal_body_nav">
+                <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                <b>새 게시물 만들기</b>
+                <span class="material-icons-outlined" onclick="close_modal()">close</span>
+            </div>
+            <div class="modal_body_bottom">
+                <div class="modal_body_bottom_left">
+                    <input id="input_feed_image" type="file" onchange="btn_feed_updateFiles(this)" accept="img/*">
+                    <button id="input_feed_image_btn" onclick="onClickfeedUpload()">사진 끌어다 넣기<br>또는<br>사진 선택하기</button>
+                </div>
+                <div class="modal_body_bottom_right">
+                    <div><img class="profile_img" src="{{ user.profile_image }}">&nbsp;&nbsp;<b>{{ user.nickname }}</b>
+                    </div>
+                    <textarea id="feed_input_area" placeholder="문구 입력 ..."></textarea>
+                    <button onclick="feed_upload()">공유하기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--기본 템플릿 안에 삽입될 내용 스타트-->
+    {% block content %}
+    {% endblock %}
+    <!--기본 템플릿 안에 삽입될 내용 엔드-->
+    <script>
+        let files;
+
+        function show_modal() {
+            $('.modal_base').css({
+                display: 'flex',
+                top: window.pageYOffset + 'px'
+            });
+            $(document.body).css({
+                overflow: 'hidden'
+            });
+        };
+
+        function close_modal() {
+            $('.modal_base').css({
+                display: 'none'
+            });
+            $(document.body).css({
+                overflow: 'scroll'
+            });
+        }
+
+        $('.modal_body_bottom_left')
+            .on("dragover", dragOver)
+            .on("dragleave", dragOver)
+            .on("drop", uploadFiles);
+
+
+
+        function dragOver(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            if (e.type == "dragover") {
+                $('.modal_body_bottom_left').css({
+                    'background-color': 'black',
+                    'outline-offset': '-20px'
+                });
+            } else {
+                $('.modal_body_bottom_left').css({
+                    "background-color": "white",
+                    "outline-offset": "-10px"
+                });
+            }
+        }
+
+        function uploadFiles(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            dragOver(e);
+
+            e.dataTransfer = e.originalEvent.dataTransfer;
+            files = e.target.files || e.dataTransfer.files;
+            if (files.length > 1) {
+                alert('하나만 올리세요.');
+                return;
+            }
+            if (files[0].type.match(/image.*/)) {
+                $(e.target).css({
+                    "background-image": "url(" + window.URL.createObjectURL(files[0]) + ")",
+                    "outline": "none",
+                    "background-size": "100% auto"
+                });
+                $('#input_feed_image_btn').css({
+                    "visibility": "hidden"
+                });
+            } else {
+                alert('이미지가 아닙니다.');
+                return;
+            }
+        }
+
+        function onClickfeedUpload() {
+            let myInput = document.getElementById("input_feed_image");
+            myInput.click();
+        };
+        function btn_feed_updateFiles(input) {
+            files = input.files;
+            if (files.length > 1) {
+                alert('하나만 올리세요.');
+                return;
+            }
+            if (files[0].type.match(/image.*/)) {
+                $('.modal_body_bottom_left').css({
+                    "background-image": "url(" + window.URL.createObjectURL(files[0]) + ")",
+                    "outline": "none",
+                    "background-size": "100% auto"
+                });
+                $('#input_feed_image_btn').css({
+                    "visibility": "hidden"
+                });
+            } else {
+                alert('이미지가 아닙니다.');
+                return;
+            }
+        };
+
+
+        function feed_upload() {
+            let file = files[0];
+            let feed_img = file.name
+            let feed_content = $('#feed_input_area').val();
+
+            let fd = new FormData();
+            fd.append('file', file);
+            fd.append('feed_img', feed_img);
+            fd.append('feed_content', feed_content);
+
+            $.ajax({
+                url: "/main/feed_upload/",
+                method: "POST",
+                data: fd,
+                processData: false,
+                contentType: false,
+                success: function () {
+                    alert('게시글 공유 성공!');
+                    location.replace("")
+                },
+                error: function () {
+                    alert('게시글 공유 실패!');
+                }
+            });
+        };
+        function not_real() {
+            alert('만드는 중 입니다.');
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
