@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>시영이의 일기장</title>
+
+    <meta property="og:title" content="시영이의 일기장"/>
+    <meta property="og:description" content="내가 만든 첫번째 웹페이지!"/>
+    <meta property="og:image" content="대회1등.jpg"/>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&display=swap" rel="stylesheet">
+
+    <style>
+        *{
+            font-family: 'Gamja Flower', cursive;
+        }
+        .mytitle {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            margin-top: 30px;
+
+        }
+
+        .btn {
+            width: 300px;
+            height: 40px;
+
+            border: 2px solid #e8344e;
+
+            text-decoration: none;
+            text-align: center;
+
+            line-height: 40px;
+
+            color: #e8344e;
+            font-weight: bold;
+
+            border-radius: 40px;
+        }
+
+        .btn:hover {
+            background-color: #e8344e;
+            color: white;
+        }
+
+        .box {
+            width: 1000px;
+
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+
+            margin: 40px auto 0 auto;
+        }
+
+        .map {
+            width: 500px;
+            height: 500px;
+
+            margin-right: 30px;
+            border-radius: 24px;
+        }
+
+        .story {
+            width: 450px;
+            height: 500px;
+        }
+        .img {
+            width: 450px;
+            height: 300px;
+
+            background-image: url('대회1등.jpg');
+            background-position: center;
+            background-size: cover;
+
+            border-radius: 24px;
+        }
+
+        .story > h2 {
+            margin: 20px 0px 0px 0px;
+            color: black;
+        }
+        
+        .story > h3 {
+            margin: 5px 0px 0px 0px;
+            font-size: 16px;
+            color: gray;
+            font-weight: normal;
+        }
+        
+        .story > p {
+            line-height: 24px;
+        }
+
+        @media screen and (max-width: 640px) {
+
+            h1 {
+                font-size: 26px;
+            }
+
+            .box {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .map {
+                width: 100%;
+                height: 200px;
+
+                margin: 0;
+            }
+
+            .story {
+                width: 100%;
+                height: auto;
+
+                margin-top: 10px;
+                margin-bottom: 10px;
+            }
+
+            .img {
+                width: 100%;
+                height: 200px;
+            }
+
+        }
+
+    </style>
+
+</head>
+<body>
+    <div class="mytitle">
+        <h1>시영이의 일기</h1>
+        <a class="btn" href="http://spartacodingclub.shop/free/202105/exhibition" target="_blank">모든 수강생들의 추억 보러가기 ></a>
+    </div>
+    <div class="box">
+        <div class="map" id="map"></div>
+        <div class="story">
+            <div class="img"></div>
+            <h2>스트릿주짓수대회 울산문수체육관</h2>
+            <h3>울산 남구 무거동 1059-21</h3>
+            <p>
+                2022.6.4 나의 생애 첫 주짓수 대회
+                스트릿주짓수 화이트 어덜트 -57.5kg
+                1경기때 시작한지 30초만에 상대 선수의 어이없는 반칙으로 인해
+                무릎부상을 입었다. (개XX 만나면 부순다)
+                경기를 해야하나 말아야하나 고민하다 남자라면 못 먹어도 고다.
+                부상으로 인해 생각해두었던 플레이는 하지 못했지만
+                그래도 당당히 금메달을 목에 걸었다. 그리고 병원에서 X-ray 찍어보니 큰 부상은 아니란다.
+                ps.솔직히 부상아니었으면 전부 초살시켰다.
+            </p>
+        </div>
+    </div>
+    <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=535068688f1a8bca1c21a9445ede0a89"></script>
+    <script>
+            var markerPosition = new kakao.maps.LatLng(35.5343686, 129.253074)
+            var mapContainer = document.getElementById('map'), // 지도를 표시할 div  
+                mapOption = { 
+                    center: markerPosition, // 지도의 중심좌표
+                    level: 3 // 지도의 확대 레벨
+                };
+
+            var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+
+            var imageSrc = "https://s3.ap-northeast-2.amazonaws.com/materials.spartacodingclub.kr/2021_05_free_parents/sparta-marker.png"; 
+            var imageSize = new kakao.maps.Size(65, 86); 
+            var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize); 
+            
+            var marker = new kakao.maps.Marker({
+                map: map,
+                position: markerPosition,
+                image : markerImage
+            });
+
+    </script>
+</body>
+</html>

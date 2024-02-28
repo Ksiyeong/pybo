@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>내 생애 최고의 순간들</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap" rel="stylesheet">
+
+    <style>
+      * {font-family: 'Nanum Pen Script', cursive;}
+
+      .title {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      .title > h1 {
+        font-size: 50px;
+        font-weight: bold;
+      }
+      .btn-outline-danger {
+        border-radius: 20px;
+        font-size: 20px;
+      }
+      .record {
+        margin-top: 25px;
+        width: 300px;
+        display: none;
+      }
+      .기록과닫기 {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+      }
+      .box {
+        width: 640px;
+        height: 470px;
+
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+
+        margin: 10px auto 10px auto;
+      }
+      .map > * {
+        width: 300px;
+        height: 430px;
+
+        border-radius: 10px;
+      }
+      .story {
+        width: 300px;
+        height: 430px;
+
+      }
+      .photo{
+        width: 280px;
+        height: 200px;
+
+        margin: 10px auto 0px auto;
+
+        border-radius: 10px;
+
+        background-position: center;
+        background-size: cover;
+      }
+      .text{
+        width: 280px;
+        height: 200px;
+
+        margin: 10px auto 0px auto;
+      }
+      .rec_bt {
+        border-radius: 7px;
+
+        width: 55px;
+        height: 40px;
+
+        border:1px solid blue;
+        color: blue;
+        background-color: white;
+        
+        margin-right: 2px;
+      }
+      .rec_bt:hover{
+        background-color: blue;
+        color: black;
+      }
+      .close_bt {
+        border-radius: 7px;
+
+        width: 55px;
+        height: 40px;
+
+        border:1px solid #ffA500;
+        color: orange;
+        background-color: white;
+        
+        margin-left: 2px;
+      }
+      .close_bt:hover{
+        background-color: orange;
+        color: black;
+      }
+    </style>
+
+    <script>
+      $(document).ready(function () {
+        show_record();
+      });
+
+      function show_record() {
+            $.ajax({
+                type: 'GET',
+                url: '/best',
+                data: {},
+                success: function (response) {
+                    let rows = response['record_list']
+                    for (let i = 0; i < rows.length; i++) {
+                        let title = rows[i]['title']
+                        let address = rows[i]['address']
+                        let google = rows[i]['google']
+                        let diary = rows[i]['diary']
+                        let temp_html = `<div class="box">
+                                            <div class="map">${google}</div>
+                                            <div class="story">
+                                              <div class="photo" style="background-image: url('static/img/${i}.jpg');"></div>
+                                              <div class="text">
+                                                <h2 style="font-weight: bolder; font-size: 25px;">${title}</h2>
+                                                <h3 style="font-size: 20px">${address}</h3>
+                                                <p style="font-size: 15px">${diary}</p>
+                                              </div>
+                                            </div>
+
+                                          </div>`
+                        $('#box-list').append(temp_html)
+                    }
+                }
+            });
+        }
+
+      function open_box() {
+        $('#record-box').show()
+      }
+      function close_box() {
+        $('#record-box').hide()
+      }
+
+      function save_record() {
+        let title = $('#input_title').val()
+        let address = $('#input_address').val()
+        let google = $('#input_address_url').val()
+        let diary = $('#input_diary').val()
+        $.ajax({
+          type: 'POST',
+          url: '/best',
+          data: {title_give : title,
+                 address_give : address,
+                 google_give : google,
+                 diary_give : diary},
+          success: function (response) {
+            alert(response['msg'])
+            window.location.reload()
+          }
+        });
+      }
+    </script>
+
+
+  </head>
+  <body>
+    <div class="title">
+      <h1>내 생애 최고의 순간들</h1>
+      <button type="button" class="btn btn-outline-danger" onclick="open_box()">순간순간 기록하기</button>
+
+      <div class="record" id="record-box">
+        <form action="/apply_photo" method="get" name="사진등록">
+          <div class="form-floating mb-3">
+            <textarea type="email" class="form-control" id="input_title" name="input_title" placeholder="name@example.com" required></textarea>
+            <label for="floatingInput">제목</label>
+          </div>
+          <div class="form-floating mb-3">
+            <textarea type="email" class="form-control" id="input_address" name="input_address" placeholder="name@example.com" required></textarea>
+            <label for="floatingInput">주소</label>
+          </div>
+          <div class="form-floating mb-3">
+            <textarea type="email" class="form-control" id="input_address_url" name="input_address_url" placeholder="name@example.com" required></textarea>
+            <label for="floatingInput">구글지도 경로</label>
+          </div>
+          <div class="form-floating mb-3">
+            <textarea type="email" class="form-control" id="input_diary" name="input_diary" placeholder="name@example.com" required></textarea>
+            <label for="floatingInput">그 날의 일기</label>
+          </div>
+          <div class="기록과닫기">
+            <button class="rec_bt">기록하기</button>
+            <button class="close_bt" onclick="close_box()">닫기</button>
+          </div>
+        </form>
+      </div>
+
+
+    </div>
+
+    <div id="box-list">
+
+      <div class="box">
+        <div class="map">
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3246.7525399061387!2d129.2515053156093!3d35.53511244557837!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x35662dc18da0610f%3A0x8689622e453bf540!2z7Jq47IKw6rSR7Jet7IucIOuCqOq1rCDrrLTqsbDrj5kgMTA1OQ!5e0!3m2!1sko!2skr!4v1657290113117!5m2!1sko!2skr" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+
+        <div class="story">
+          <div class="photo" style="background-image: url(/static/img/대회1등.jpg);"></div>
+          <div class="text">
+            <h2 style="font-weight: bolder; font-size: 25px;">스트릿주짓수대회 울산문수체육관</h2>
+            <h3 style="font-size: 20px">울산 남구 무거동 1059-21</h3>
+            <p style="font-size: 15px">2022.6.4 나의 생애 첫 주짓수 대회.
+              1경기때 시작한지 30초만에 상대 선수의 어이없는 반칙으로 인해 무릎부상을 입었다.
+              (이놈 다시 만나면 부순다)
+              경기를 진행해야할지 말아야할지 고민하다 김시영 인생에 패배란 없다.
+              부상으로 인해 생각해두었던 플레이는 하지 못했지만 그래도 당당히 금메달을 목에 걸었다.
+              ps.솔직히 부상아니었으면 전부 초살시켰다ㅋ</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+  </body>
+</html>
