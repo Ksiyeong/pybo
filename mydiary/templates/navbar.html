@@ -1,0 +1,33 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'main:index' 'all' %}">홈페이지</a>
+        <a class="nav-link text-dark" href="{% url 'main:index' 'all' %}">전체글</a>
+        <a class="nav-link text-dark" href="{% url 'main:index' 'freeboard' %}">자유게시판</a>
+        <a class="nav-link text-dark" href="{% url 'main:index' 'diary' %}">일기장</a>
+        <a class="nav-link text-dark" href="{% url 'main:index' 'QnA' %}">Q&A</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                {% if user.is_authenticated %}
+                <li>
+                    <a class="nav-link" href="{% url 'common:userdetail' user.id %}">{{ user.username }}</a>
+                </li>
+                <li>
+                    <a class="nav-link" href="{% url 'common:logout' %}">(로그아웃)</a>
+                </li>
+                {% else %}
+                <li>
+                    <a class="nav-link" href="{% url 'common:login' %}">로그인</a>
+                </li>
+                <li>
+                    <a class="nav-link" href="{% url 'common:signup' %}">회원가입</a>
+                </li>
+                {% endif %}
+
+            </ul>
+        </div>
+    </div>
+</nav>
